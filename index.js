@@ -15,7 +15,7 @@ var unoconv = exports = module.exports = {};
 * @param {Function} callback
 * @api public
 */
-unoconv.convert = function(file, outputFormat, options, callback) {
+unoconv.convert = function (file, outputFormat, options, callback) {
     var self = this,
         args,
         bin = 'unoconv',
@@ -45,13 +45,11 @@ unoconv.convert = function(file, outputFormat, options, callback) {
 
     if (options && options.bin) {
         bin = options.bin;
-    } 
-
-    try {
-        child = childProcess.spawn(bin, args);
-    } catch(e) {
-        return callback(new Error('Unoconv cant spawn.'));
     }
+
+    child = childProcess.spawn(bin, args).on('error', function (err) {
+        callback(new Error('Unoconv cant spawn.'));
+    });
 
     child.stdout.on('data', function (data) {
         stdout.push(data);
@@ -83,7 +81,7 @@ unoconv.listen = function (options) {
         args,
         bin = 'unoconv';
 
-    args = [ '--listener' ];
+    args = ['--listener'];
 
     if (options && options.port) {
         args.push('-p' + options.port);
@@ -122,7 +120,7 @@ unoconv.detectSupportedFormats = function (options, callback) {
         bin = options.bin;
     }
 
-    childProcess.execFile(bin, [ '--show' ], function (err, stdout, stderr) {
+    childProcess.execFile(bin, ['--show'], function (err, stdout, stderr) {
         if (err) {
             return callback(err);
         }
